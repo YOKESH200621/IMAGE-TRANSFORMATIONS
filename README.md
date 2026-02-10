@@ -1,6 +1,5 @@
 # IMAGE-TRANSFORMATIONS
 
-
 ## Aim
 To perform image transformation such as Translation, Scaling, Shearing, Reflection, Rotation and Cropping using OpenCV and Python.
 
@@ -8,187 +7,160 @@ To perform image transformation such as Translation, Scaling, Shearing, Reflecti
 Anaconda - Python 3.7
 
 ## Algorithm:
-### Step1:
-Import necessary libraries such as OpenCV, NumPy, and Matplotlib for image processing and visualization.
-
-### Step2:
-Read the input image using cv2.imread() and store it in a variable for further processing.
-
-### Step3:
-Apply various transformations like translation, scaling, shearing, reflection, rotation, and cropping by defining corresponding functions:
-```
-1.Translation moves the image along the x or y-axis.
-2.Scaling resizes the image by scaling factors.
-3.Shearing distorts the image along one axis.
-4.Reflection flips the image horizontally or vertically.
-5.Rotation rotates the image by a given angle.
-```
-### Step4:
-Display the transformed images using Matplotlib for visualization. Convert the BGR image to RGB format to ensure proper color representation.
+### Step 1:
+Import necessary libraries (cv2, numpy, matplotlib) and load the source image.
 
 
-### Step5:
-Save or display the final transformed images for analysis and use plt.show() to display them inline in Jupyter or compatible environments.
+### Step 2:
+Create transformation matrices for translation, rotation, scaling, and shearing using functions like cv2.getRotationMatrix2D().
+
+
+### Step 3:
+Apply the geometric transformations using cv2.warpAffine() for affine transformations and cv2.flip() for reflection.
+
+
+### Step 4:
+Crop the image by selecting a specific rectangular region using NumPy array slicing.
+
+
+### Step 5:
+Display the original and all transformed images with appropriate titles using matplotlib.pyplot.
 
 
 ## Program:
-```python
-Developed By: YOKESH I
-Register Number: 212224230313
+
+## Developed By: YOKESH I
+## Register Number: 212224230313
+PYTHON
 ```
-```
-#import the libraries
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-
-#Load the image and check if it's loaded correctly
-input_img = cv2.imread(r"C:\Users\admin\Downloads\digitalimage\baby-moana.jpg")
-if input_img is None:
-    print("Error: Image not found.")
-else:
-    input_img = cv2.cvtColor(input_img, cv2.COLOR_BGR2RGB)
-
-    # Display the image
-    plt.figure(figsize=(8, 8))  # Optional: adjust size for better clarity
-    plt.axis('off')
-    plt.imshow(input_img)
-    plt.title("Original Image")
-    plt.tight_layout()  # Optional: makes sure layout is tight
-    plt.show()
-
+# Step 1: Load the image
+image = cv2.imread('1000077167.jpg')  # Load the image from file
+# Display the original image
+plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))  # Convert BGR to RGB for correct display
+plt.title("Original Image")  
+plt.axis('off') 
+(np.float64(-0.5), np.float64(1279.5), np.float64(812.5), np.float64(-0.5))
 ```
-## i)Image Translation
+
+i)Image Translation
 ```
-#Get image dimensions
-rows, cols, dim = input_img.shape
 
-#Define translation matrix
-translation_x = 50  # Move 50 pixels to the right
-translation_y = 50  # Move 50 pixels down
-M = np.float32([[1, 0, translation_x], [0, 1, translation_y]])
-
-#Perform the translation
-translated_img = cv2.warpAffine(input_img, M, (cols, rows))
-
-#Display the translated image
+tx, ty = 100, 50  # Translation factors (shift by 100 pixels horizontally and 50 vertically)
+M_translation = np.float32([[1, 0, tx], [0, 1, ty]])  # Translation matrix: 
+# [1, 0, tx] - Horizontal shift by tx
+# [0, 1, ty] - Vertical shift by ty
+translated_image = cv2.warpAffine(image, M_translation, (image.shape[1], image.shape[0]))  
+plt.imshow(cv2.cvtColor(translated_image, cv2.COLOR_BGR2RGB))  # Display the translated image
+plt.title("Translated Image")  
 plt.axis('off')
-plt.imshow(translated_img)
-plt.title("Translated Image")
-plt.show()
-
+(np.float64(-0.5), np.float64(1279.5), np.float64(812.5), np.float64(-0.5))
 ```
-## ii) Image Scaling
-```
-#Perform scaling with different scaling factors for x and y axes
-fx, fy = 1.5, 2.0  # Scaling factors
-scaled_img = cv2.resize(input_img, None, fx=fx, fy=fy, interpolation=cv2.INTER_LINEAR)
 
-#Show the scaled image
+ii) Image Scaling
+```
+
+fx, fy = 5.0, 2.0  # Scaling factors (1.5x scaling for both width and height)
+scaled_image = cv2.resize(image, None, fx=fx, fy=fy, interpolation=cv2.INTER_LINEAR)
+# resize: Resize the image by scaling factors fx, fy
+# INTER_LINEAR: Uses bilinear interpolation for resizing
+plt.imshow(cv2.cvtColor(scaled_image, cv2.COLOR_BGR2RGB))  # Display the scaled image
+plt.title("Scaled Image")  # Set title
 plt.axis('off')
-plt.imshow(scaled_img)
-plt.title("Scaled Image")
-plt.show()
-
+(np.float64(-0.5), np.float64(6399.5), np.float64(1625.5), np.float64(-0.5))
 ```
-## iii)Image shearing
+
+iii)Image shearing
 ```
-#Shearing in X-axis
-shear_factor_x = 0.5  # Shear factor for X-axis
-M_x = np.float32([[1, shear_factor_x, 0], [0, 1, 0]])
-
-#Apply shearing
-sheared_img_xaxis = cv2.warpAffine(input_img, M_x, (int(cols + shear_factor_x * rows), rows))
-
-#Display the sheared image
+shear_matrix = np.float32([[1, 0.5, 0], [0.5, 1, 0]])  # Shearing matrix
+# The matrix shears the image by a factor of 0.5 in both x and y directions
+# [1, 0.5, 0] - Shear along the x-axis (horizontal)
+# [0.5, 1, 0] - Shear along the y-axis (vertical)
+sheared_image = cv2.warpAffine(image, shear_matrix, (image.shape[1], image.shape[0]))
+plt.imshow(cv2.cvtColor(sheared_image, cv2.COLOR_BGR2RGB))  # Display the sheared image
+plt.title("Sheared Image")  # Set title
 plt.axis('off')
-plt.title("Sheared X-axis")
-plt.imshow(sheared_img_xaxis)
-
+(np.float64(-0.5), np.float64(1279.5), np.float64(812.5), np.float64(-0.5))
 ```
-## iv)Image Reflection
+
+iv)Image Reflection
 ```
-#Flip image along the X-axis (vertical reflection)
-reflected_img_xaxis = cv2.flip(input_img, 0)
 
-#Display the reflected image
-plt.axis("off")
-plt.title("Reflected (X-axis)")
-plt.imshow(reflected_img_xaxis)
-
-```
-## v)Image Rotation
-```
-#Get image dimensions
-rows, cols = input_img.shape[:2]
-
-#Define rotation center, angle, and scale
-center = (cols // 2, rows // 2)
-angle = 45  # Rotation angle in degrees
-scale = 1.0  # Scale factor (1.0 means no scaling)
-
-#Get the rotation matrix
-M = cv2.getRotationMatrix2D(center, angle, scale)
-
-#Apply the rotation
-rotated_img = cv2.warpAffine(input_img, M, (cols, rows))
-
-#Display the rotated image
+reflected_image = cv2.flip(image, 2)  # Flip the image horizontally (1 means horizontal flip)
+# flip: 1 means horizontal flip, 0 would be vertical flip, -1 would flip both axes
+plt.imshow(cv2.cvtColor(reflected_image, cv2.COLOR_BGR2RGB))  # Display the reflected image
+plt.title("Reflected Image")  # Set title
 plt.axis('off')
-plt.title("Rotated Image (45°)")
-plt.imshow(rotated_img)
-plt.show()
-
+(np.float64(-0.5), np.float64(1279.5), np.float64(812.5), np.float64(-0.5))
 ```
-## )Image Cropping
+
+
+v)Image Rotation
 ```
-#Define the cropping coordinates: top-left corner (x, y) and width (w), height (h)
-x, y, w, h = 400, 100, 1000, 500
 
-#Crop the image by slicing the array
-cropped_image = input_img[y:y+h, x:x+w]
-
-#Display the cropped image (convert to RGB for correct color representation)
-plt.imshow(cv2.cvtColor(cropped_image, cv2.COLOR_BGR2RGB))
-plt.title("Cropped Image")
+(height, width) = image.shape[:2]  # Get the image height and width
+angle = 45  # Rotation angle in degrees (rotate by 45 degrees)
+center = (width // 2, height // 2)  # Set the center of rotation to the image center
+M_rotation = cv2.getRotationMatrix2D(center, angle, 1)  # Get the rotation matrix
+# getRotationMatrix2D: Takes the center of rotation, angle, and scale factor (1 means no scaling)
+rotated_image = cv2.warpAffine(image, M_rotation, (width, height))  # Apply rotation
+plt.imshow(cv2.cvtColor(rotated_image, cv2.COLOR_BGR2RGB))  # Display the rotated image
+plt.title("Rotated Image")  # Set title
 plt.axis('off')
-plt.show()
-
+(np.float64(-0.5), np.float64(1279.5), np.float64(812.5), np.float64(-0.5))
 ```
+
+
+vi)Image Cropping
+```
+x, y, w, h = 100, 100, 200, 150  # Define the top-left corner (x, y) and the width (w) and height (h) of the crop
+# Cropping the image from coordinates (x, y) to (x+w, y+h)
+cropped_image = image[y:y+h, x:x+w]
+# The crop is performed by slicing the image array in the y and x directions
+plt.imshow(cv2.cvtColor(cropped_image, cv2.COLOR_BGR2RGB))  # Display the cropped image
+plt.title("Cropped Image")  # Set title
+plt.axis('off')
+(np.float64(-0.5), np.float64(199.5), np.float64(149.5), np.float64(-0.5))
+```
+
+
 
 ## Output:
-### Original Image
+## ORIGINAL IMAGE
 
-![Screenshot 2025-04-23 083000](https://github.com/user-attachments/assets/a8639b89-e01d-49e6-a818-1d1fc4ef921c)
+<img width="432" height="570" alt="image" src="https://github.com/user-attachments/assets/22a2e8b6-cb7c-48ee-a285-1f6b313980a0" />
 
 
 ### i)Image Translation
+<img width="434" height="577" alt="image" src="https://github.com/user-attachments/assets/80054105-924e-4217-9b3f-5af37ea34201" />
 
-![Screenshot 2025-04-23 083032](https://github.com/user-attachments/assets/7824c7bf-de21-4d31-af99-a119f8b6d171)
 
 
 ### ii) Image Scaling
-
-![Screenshot 2025-04-23 083110](https://github.com/user-attachments/assets/a0e02f50-9cd5-48d3-b16a-59f85913d611)
+<img width="689" height="420" alt="image" src="https://github.com/user-attachments/assets/e8952150-5227-455e-9890-77b653e87f39" />
 
 
 ### iii)Image shearing
+<img width="426" height="577" alt="image" src="https://github.com/user-attachments/assets/48568113-535f-4e26-91c6-51ab0bf16555" />
 
-![Screenshot 2025-04-23 083142](https://github.com/user-attachments/assets/df9d9d9a-2ff7-4d6a-a700-5a6bec0200e3)
 
 
 ### iv)Image Reflection
-
-![Screenshot 2025-04-23 083206](https://github.com/user-attachments/assets/4f9089b4-b418-4ec6-af40-ce0e4e116da8)
+<img width="448" height="578" alt="image" src="https://github.com/user-attachments/assets/ad0c9da9-8b86-442c-a756-b808fc780909" />
 
 
 ### v)Image Rotation
+<img width="448" height="577" alt="image" src="https://github.com/user-attachments/assets/f0d23a45-e341-4617-9477-c7fbd19a949e" />
 
-![Screenshot 2025-04-23 083228](https://github.com/user-attachments/assets/66fc0073-f09f-45e7-aa9f-332414c07cff)
+
+
 
 ### vi)Image Cropping
+<img width="334" height="560" alt="image" src="https://github.com/user-attachments/assets/c5d915f2-e62f-4f7b-b1a1-3a0039c17f19" />
 
-![Screenshot 2025-04-23 083253](https://github.com/user-attachments/assets/cb74b4d3-bc68-486f-9420-4753da20ab94)
+
 
 
 ## Result: 
